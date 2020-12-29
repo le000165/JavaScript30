@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>JS Drum Kit</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="shortcut icon" href="#" />
 </head>
+
 <body>
-
-
   <div class="keys">
     <div data-key="65" class="key">
       <kbd>A</kbd>
@@ -57,10 +58,31 @@
   <audio data-key="75" src="sounds/tom.wav"></audio>
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
-<script>
+  <script>
+    // fucntion to play sound and adding the animation class to the key that was key down
+    // notice when using callback on event the param of the call back function is always "e"
+    function playSound(e) {
+      //example of using attribute selector using ES6 curly braces template string
+      const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
+      const key = document.querySelector(`.key[data-key="${e.keyCode}"]`); // selecting with class and attribute
+      if (!audio) return; // stop the fuction from running all together
+      audio.currentTime = 0; // rewind to the start
+      audio.play();
+      key.classList.add('playing');
+    }
 
-</script>
+    // to remove the animation when the transition is done base on the time set on the css transition
+    // notice when using callback on event the param of the call back function is always "e"
+    function removeTransition(e) {
+      if (e.propertyName !== 'transform') return; // skip if it's not a tranform
+      this.classList.remove('playing'); // this is key, console.log(this) to learn more
+    }
 
-
+    // getting list of key div element, suggesting using Array.From to convert array like to Array  
+    const keys = Array.from(document.querySelectorAll('.key'));
+    keys.forEach((key) => key.addEventListener('transitionend', removeTransition));
+    window.addEventListener('keydown', playSound); // using keydown event and calling the call back function playSound
+  </script>
 </body>
+
 </html>
